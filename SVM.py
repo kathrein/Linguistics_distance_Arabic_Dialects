@@ -11,10 +11,22 @@ Created on Tue Apr  3 15:01:30 2018
 
 import svm_trainig as svm
 from pprint import pprint
+import argparse
+
+
+parser = argparse.ArgumentParser()
+
+parser.add_argument("--dialect_one", "-f", type=str, help='the first dialect text file.', required=True)
+
+parser.add_argument("--dialect_two", "-s", type=str, help='the second dialect text file.', required=True)
+
+
 
 if __name__ == '__main__':
-    dialect = ['pa','pa']
-    corpus_files = ['clean_data/pa.txt','clean_data/pa.txt']
+    args = parser.parse_args()
+    #dialect = ['pa','sy']
+    dialect = [args.dialect_one,args.dialect_two]
+    corpus_files = ['clean_data/'+dialect[0]+'.txt','clean_data/'+dialect[1]+'.txt']
     dictionary_memory_friendly, corpus_memory_friendly = svm.training_phase(corpus_files, dialect)
 
     dictionary, corpus = svm.upload_data(dialect)
@@ -43,4 +55,4 @@ if __name__ == '__main__':
     #print(summation)
     print('Number of document in {0} = {1}'.format(dialect[0], len(corpus)))
     print('Number of document in {0} = {1}'.format(dialect[1], len(svm.read_full_text(corpus_files[1]))))
-    print('The avg similarity between {0} and {1} is {2} %'.format(dialect[0], dialect[1], summation))#/(len(corpus))))
+    print('The avg similarity between {0} and {1} is {2} '.format(dialect[0], dialect[1], summation))#/(len(corpus))))

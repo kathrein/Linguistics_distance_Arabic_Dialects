@@ -56,12 +56,7 @@ def clean(corpus_file):
         #print("remove non Arabic")
         pure_arabic_text = keep_only_arabic(alphapet_text.split())
         del alphapet_text
-    
-        #print(pure_arabic_text.split())
-        #print("get the words list")
-        #words = pure_arabic_text.split()
-        #del pure_arabic_text
-        #print(pure_arabic_text)
+
         final_update_text = del_char.delete_repeat_char(pure_arabic_text)
         new_corpus.append(final_update_text)
     
