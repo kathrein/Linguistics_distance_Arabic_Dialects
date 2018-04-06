@@ -35,27 +35,54 @@ class MyCorpus(object):
             yield self.dictionary.doc2bow(line.split())
 
 
-def training_phase(corpus_file, dialect):
-    # with open(corpus_file, encoding = 'utf-8') as f: # we can define file_name
-    #   documents = f.read()#.splitlines()
-    # print(documents)
-    # texts = [[word for word in document.split()]
-    #         for document in documents]
-    # texts = texts + texts
-    # pprint(texts)
+def read_text(corpus_file):
+    
+    with open(corpus_file, encoding = 'utf-8') as f: # we can define file_name
+          documents = f.read().splitlines()
+    texts = [[word for word in document.split()] for document in documents]
+    
+    
+    return texts
 
-    #  #Bag of words - collect statistics about all tokens
-    dictionary = corpora.Dictionary(line.split() for line in open(corpus_file, encoding='utf-8'))
+def read_full_text(corpus_file):
+    with open(corpus_file, encoding = 'utf-8') as f: # we can define file_name
+          documents = f.read()
+    texts = [documents.split(),[]]
+    #print (texts)
+    return texts
+
+
+def training_phase(corpus_files, dialect):
+    counter = 0
+
+    for corpus_file in corpus_files:
+        texts = read_text(corpus_file)
+
+        if counter == 0:
+            #print(counter)
+            temp = texts
+            counter = 1
+        else:
+            second_text = texts
+    texts = temp + texts
+    #print(len(texts))
+
+
+    #  Bag of words
+    #dictionary = corpora.Dictionary(line.split() for line in open(corpus_files[0], encoding='utf-8'))
+    dictionary = corpora.Dictionary(texts)
+    #print(dictionary.token2id)
     dictionary.compactify()  # remove gaps in id sequence after words that were removed
     dictionary.save('parameters/' + dialect[0] + '_'+dialect[1]+'.dict')
-    # print(dictionary)
-    # pprint(dictionary.token2id)
+    #pprint(dictionary.token2id)
 
-    corpus_memory_friendly = MyCorpus(corpus_file,dictionary)  # doesn't load the corpus into memory!
+    #- collect statistics about all tokens (trainig_data)
+    corpus_memory_friendly = [dictionary.doc2bow(text) for text in read_full_text(corpus_files[0])]#second_text]
+    #corpus_memory_friendly = MyCorpus(corpus_files[0],dictionary)  # doesn't load the corpus into memory!
     corpora.MmCorpus.serialize('parameters/' + dialect[0] + '_'+dialect[1] +'.mm',
                                corpus_memory_friendly)  # store to disk, for later use
-    # for vector in corpus_memory_friendly:  # load one vector into memory at a time
-    #   pprint(vector)
+    #for vector in corpus_memory_friendly:  # load one vector into memory at a time
+     #   pprint(vector)
 
 
 
@@ -84,12 +111,15 @@ def build_tfidf_model(corpus):
     less resources) and efficacy (marginal data trends are ignored, noise-reduction).
     """
 
-    tfidf = models.TfidfModel(corpus, normalize=True)  # step 1 -- initialize a model
+    tfidf = models.TfidfModel(corpus)#,normalize = True)  # step 1 -- initialize a model
     # It can also optionally normalize the resulting vectors to (Euclidean) unit length.
-
+    #print(tfidf)
     corpus_tfidf = tfidf[corpus]  # step 2 -- use the model to transform vectors
-    # for doc in corpus_tfidf:
-    #   pprint(doc)
+    #for doc in corpus_tfidf:
+       #print(doc)
+
+
+
 
     return corpus_tfidf,tfidf
 
@@ -102,8 +132,15 @@ def compute_similarity(vec_tfidf, corpus_model,dialect):
     index = similarities.MatrixSimilarity.load('parameters/' + dialect[0] + '_'+dialect[1] +'.index')
     sims = index[vec_tfidf]  # perform a similarity query against the corpus
     sims = sorted(enumerate(sims), key=lambda item: -item[1])  # sorted
-    # pprint(list(enumerate(sims))) # print (document_number, document_similarity) 2-tuples
+    #pprint(list(enumerate(sims)))  print (document_number, document_similarity) 2-tuples
 
-    pprint(sims)
+    #pprint(sims)
     return sims
 
+
+def test_corpus(document, Model, dictionary):
+    # convert the test document / sentence to BOW model then compute the space mdoel
+    vec_bow = dictionary.doc2bow(document.split())
+    vec_tfidf = Model[vec_bow]  # convert the query to model space
+
+    return vec_tfidf

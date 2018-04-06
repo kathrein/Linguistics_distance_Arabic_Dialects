@@ -9,6 +9,9 @@ Created on Thu Apr  5 18:05:30 2018
 import sys
 import string
 from alphabet_detector import AlphabetDetector
+from pprint import pprint
+import delete_repeated_char as del_char
+
 
 
 def remove_punctuations(text):
@@ -37,29 +40,41 @@ def remove_digits(text):
 def clean(corpus_file):
     
     print("reading corpus ...")
-    corpus = open(corpus_file).read()
+    corpus = open(corpus_file).readlines()
+    new_corpus = []
+    #pprint(corpus)
     
-    print("removing punctuations and digits")
-    clean_text = remove_punctuation(corpus)
-    alphapet_text = remove_digits(clean_text)
-    del corpus
-    del clean_text
+    for line in corpus:
+        
+    
+        #print("removing punctuations and digits")
+        clean_text = remove_punctuation(line)
+        alphapet_text = remove_digits(clean_text)
+        #del corpus
+        del clean_text
+    
+        #print("remove non Arabic")
+        pure_arabic_text = keep_only_arabic(alphapet_text.split())
+        del alphapet_text
+    
+        #print(pure_arabic_text.split())
+        #print("get the words list")
+        #words = pure_arabic_text.split()
+        #del pure_arabic_text
+        #print(pure_arabic_text)
+        final_update_text = del_char.delete_repeat_char(pure_arabic_text)
+        new_corpus.append(final_update_text)
+    
+    #print(new_corpus)
+    #return ' '.join(words), new_corpus
+    return new_corpus
 
-    print("remove non Arabic")
-    pure_arabic_text = keep_only_arabic(alphapet_text.split())
-    del alphapet_text
-
-    #print(pure_arabic_text.split())
-    print("get the words list")
-    words = pure_arabic_text.split()
-    del pure_arabic_text
-
-    return ' '.join(words)
 
 #print as one line
-def print_to_file(clean_corpus,output_file):
+def print_to_file(new_corpus,output_file):
     fout = open(output_file, 'w', encoding = 'utf-8')
-    fout.write(clean_corpus) 
+    for line in new_corpus:
+        fout.write(line+'\n') 
 
 def usage():
     return "please provide a corpus file"
@@ -67,9 +82,9 @@ def usage():
 
 if __name__ == '__main__':
     if len(sys.argv) == 2:
-        corpus = sys.argv[1]  # file_name
+        corpus = 'clean_data/'+sys.argv[1]  # file_name
         #print(clean(corpus))
-        print_to_file(clean(corpus),'clean_data/'+sys.argv[1])
+        print_to_file(clean(corpus),'clean_data/clean_'+sys.argv[1])
     else:
         print(usage())
         sys.exit(-1)
