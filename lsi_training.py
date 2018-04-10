@@ -14,56 +14,20 @@ from gensim import corpora, models, similarities
 from pprint import pprint  # pretty-printer
 # from six import iteritems #not load dictionary into memory
 import os.path
+import premodel
 
 
-class MyCorpus(object):
-    def __init__(self, corpus_file, dictionary):
-        """
-        Checks if a dictionary has been given as a parameter.
-        If no dictionary has been given, it creates one and saves it in the disk.
-        """
-        self.file_name = corpus_file
-        if not dictionary is None:
-            self.dictionary = dictionary
-            # else:
-            #     self.dictionary = dictionary
-
-    def __iter__(self):
-        for line in open(self.file_name, encoding='utf-8'):
-            # assume there's one document per line, tokens separated by whitespace
-            yield self.dictionary.doc2bow(line.split())
 
 
-def read_text(corpus_file):
-    with open(corpus_file, encoding='utf-8') as f:  # we can define file_name
-        documents = f.read().splitlines()
-    texts = [[word for word in document.split()] for document in documents]
-
-    return texts
-
-
-def read_full_text(corpus_file):
-    with open(corpus_file, encoding='utf-8') as f:  # we can define file_name
-        documents = f.read()
-    texts = [documents.split(), []]
-    # print (texts)
-    return texts
-
-
-def training_phase(corpus_files, dialect):
+def training_phase(folder,corpus_files, dialect):
     counter = 0
 
     for corpus_file in corpus_files:
-        texts = read_text(corpus_file)
-
+        texts = premodel.read_text(corpus_file)
         if counter == 0:
-            # print(counter)
             temp = texts
             counter = 1
-        else:
-            second_text = texts
     texts = temp + texts
-    # print(len(texts))
 
 
     #  Bag of words
@@ -72,25 +36,14 @@ def training_phase(corpus_files, dialect):
     dictionary.save('parameters/' + dialect[0] + '_' + dialect[1] + '.dict')
 
     # - collect statistics about all tokens (trainig_data)
-    corpus_memory_friendly = [dictionary.doc2bow(text) for text in read_text(corpus_files[0])]#second_text]
+    corpus = [dictionary.doc2bow(text) for text in list(premodel.read_set_of_file(folder))]
     corpora.MmCorpus.serialize('parameters/' + dialect[0] + '_' + dialect[1] + '.mm',
-                               corpus_memory_friendly)  # store to disk, for later use
+                               corpus)  # store to disk, for later use
 
-
-
-    return dictionary, corpus_memory_friendly
-
-
-def upload_data(dialect):
-    # 2 Transformation
-    if (os.path.exists('parameters/' + dialect[0] + '_' + dialect[1] + '.dict')):
-        dictionary = corpora.Dictionary.load('parameters/' + dialect[0] + '_' + dialect[1] + '.dict')
-        corpus = corpora.MmCorpus('parameters/' + dialect[0] + '_' + dialect[1] + '.mm')
-        print("True files generated from first tutorial")
-    else:
-        print("Please run first tutorial to generate data set")
 
     return dictionary, corpus
+
+
 
 
 def build_lsi_model(corpus,dictionary):
@@ -103,13 +56,10 @@ def build_lsi_model(corpus,dictionary):
     less resources) and efficacy (marginal data trends are ignored, noise-reduction).
     """
 
-    lsi = models.LsiModel(corpus, id2word=dictionary, num_topics=100)
+    lsi = models.LsiModel(corpus, id2word=dictionary, num_topics=300)#100
     corpus_lsi = lsi[corpus]  # step 2 -- use the model to transform vectors
     # for doc in corpus_tfidf:
     # print(doc)
-
-
-
 
     return corpus_lsi, lsi
 
@@ -124,7 +74,7 @@ def compute_similarity(vec_model, corpus_model, dialect):
     sims = sorted(enumerate(sims), key=lambda item: -item[1])  # sorted
     #pprint(list(enumerate(sims)))  #print (document_number, document_similarity) 2-tuples
 
-    #pprint(sims)
+    pprint(sims)
     #print(len(sims))
     return sims
 
