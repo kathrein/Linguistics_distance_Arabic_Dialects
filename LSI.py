@@ -14,20 +14,20 @@ import argparse
 import premodel
 
 parser = argparse.ArgumentParser()
+parser.add_argument("--corpus_folder", "-c", type=str, help='the folder contains the corpus files.', required=True)
 
-parser.add_argument("--dialect_one", "-f", type=str, help='the first dialect text file.', required=True)
+parser.add_argument("--dialect_one", "-f", type=str, help='the train dialect.', required=False)
 
-parser.add_argument("--dialect_two", "-s", type=str, help='the second dialect text file.', required=True)
-parser.add_argument("--corpus_folder", "-ff", type=str, help='the folder contains the corpus files.', required=True)
+parser.add_argument("--dialect_two", "-s", type=str, help='the test dialect text file.', required=True)
 
 
 if __name__ == '__main__':
     args = parser.parse_args()
     # dialect = ['pa','sy']
-    dialect = [args.dialect_one, args.dialect_two]
+    dialect = ['LSI', args.dialect_two]
     corpus_files = ['clean_data/' + dialect[0] + '.txt', 'clean_data/' + dialect[1] + '.txt']
     folder = args.corpus_folder +'/'
-    dictionary_memory_friendly, corpus_memory_friendly = lsi_model.training_phase(folder,corpus_files, dialect)
+    dictionary_memory_friendly, corpus_memory_friendly = lsi_model.training_phase(folder, dialect)
 
     dictionary, corpus = premodel.upload_data(dialect)
 

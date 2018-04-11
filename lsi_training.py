@@ -19,26 +19,38 @@ import premodel
 
 
 
-def training_phase(folder,corpus_files, dialect):
+def training_phase(folder, dialect):
     counter = 0
 
-    for corpus_file in corpus_files:
-        texts = premodel.read_text(corpus_file)
-        if counter == 0:
-            temp = texts
-            counter = 1
-    texts = temp + texts
+    # for corpus_file in corpus_files:
+    #     texts = premodel.read_text(corpus_file)
+    #     if counter == 0:
+    #         temp = texts
+    #         counter = 1
+    # texts = temp + texts
 
+    for file in os.listdir(folder):
+        extension = os.path.splitext(file)[1]
+        if extension == '.txt':
+            filepath = os.path.join(folder, file)
+            texts = premodel.read_text(filepath)
+            if counter == 0:
+                dictionary = corpora.Dictionary(texts)
+
+            else:
+                dictionary.add_documents(texts)
+
+            #ct.add_documents
+    #print(len(dictionary))
 
     #  Bag of words
-    dictionary = corpora.Dictionary(texts)
+    #dictionary = corpora.Dictionary(texts)
     dictionary.compactify()  # remove gaps in id sequence after words that were removed
-    dictionary.save('parameters/' + dialect[0] + '_' + dialect[1] + '.dict')
+    dictionary.save('parameters/' + dialect[0] + '_'+dialect[1]+'.dict')
 
     # - collect statistics about all tokens (trainig_data)
     corpus = [dictionary.doc2bow(text) for text in list(premodel.read_set_of_file(folder))]
-    corpora.MmCorpus.serialize('parameters/' + dialect[0] + '_' + dialect[1] + '.mm',
-                               corpus)  # store to disk, for later use
+    corpora.MmCorpus.serialize('parameters/' + dialect[0] + '_'+dialect[1] +'.mm',corpus)  # store to disk, for later use
 
 
     return dictionary, corpus

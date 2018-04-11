@@ -41,14 +41,15 @@ def read_set_of_file(folder):
     lists = []
     counter = 0
     for file in os.listdir(folder):
+        #print(len(os.listdir(folder)))
         extension = os.path.splitext(file)[1]
         if extension == '.txt':
             print (counter, file)
-            counter = counter +1
             filepath = os.path.join(folder, file)
             f = open(filepath, mode='r', encoding='utf-8')
             lists = lists + read_full_text(filepath)
             f.close()
+            counter = counter +1
     return filter(None, lists)
 
 
