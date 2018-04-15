@@ -38,7 +38,7 @@ if __name__ == '__main__':
     summation = 0
     with open(corpus_files[1], encoding='utf-8') as f:  # we can define file_name
         documents = f.read().splitlines()
-    print(type(documents))
+    #print(type(documents))
     #for x in svm.read_full_text(corpus_files[1]):
      #   print(type(' '.join(x)))
     #print(len(documents))
