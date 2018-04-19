@@ -26,7 +26,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     #dialect = ['pa','sy']
     dialect = [args.dialect_one,args.dialect_two]
-    corpus_files = ['clean_data/'+dialect[0]+'.txt','clean_data/'+dialect[1]+'.txt']
+    corpus_files = ['clean_data/SDC/'+dialect[0]+'.txt','clean_data/SDC/'+dialect[1]+'.txt']
     dictionary_memory_friendly, corpus_memory_friendly = svm.training_phase(corpus_files, dialect)
 
     dictionary, corpus = svm.upload_data(dialect)

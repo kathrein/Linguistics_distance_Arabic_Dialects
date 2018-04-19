@@ -25,7 +25,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     # dialect = ['pa','sy']
     dialect = ['LSI', args.dialect_two]
-    corpus_files = ['clean_data/' + dialect[0] + '.txt', 'clean_data/' + dialect[1] + '.txt']
+    corpus_files = ['clean_data/nizar/' + dialect[0] + '.txt', 'clean_data/nizar/' + dialect[1] + '.txt']
     folder = args.corpus_folder +'/'
     dictionary_memory_friendly, corpus_memory_friendly = lsi_model.training_phase(folder, dialect)
 
@@ -37,7 +37,7 @@ if __name__ == '__main__':
     summation = 0
     with open(corpus_files[1], encoding='utf-8') as f:  # we can define file_name
         documents = f.read().splitlines()
-    print(type(documents))
+   # print(type(documents))
     count = 0
     for document in premodel.read_full_text(corpus_files[1]):
 
@@ -53,7 +53,7 @@ if __name__ == '__main__':
             if not (y == 0) :
                 count = count+1
 
-    print('count = ',count)
+    #print('count = ',count)
     if count == 0 :
         count = 1
     print('Number of document in {0} = {1}'.format(dialect[0], len(corpus)))

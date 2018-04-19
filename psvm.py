@@ -23,7 +23,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     # dialect = ['pa','sy']
     dialect = [args.dialect_one, args.dialect_two]
-    corpus_files = ['clean_data/padic/' + dialect[0] + '.txt', 'clean_data/padic/' + dialect[1] + '.txt']
+    corpus_files = ['clean_data/annotated/' + dialect[0] + '.txt', 'clean_data/annotated/' + dialect[1] + '.txt']
 
 
     #dictionary = svm.build_dictionary_phase(corpus_files, dialect)
@@ -37,10 +37,11 @@ if __name__ == '__main__':
     summation = 0
     for i, (a, b) in enumerate(zip(train_document, test_document)):
         dict = [a.split(),b.split()]
-        #print(a)
-        #print(b)
         dictionary = svm.build_dictionary_phase(corpus_files,dict, dialect)
         #xprint(dictionary.token2id)
+        #print(a)
+        if a == '':
+            continue
         corpus = svm.build_corpus_phase(dictionary, [a.split(), []],dialect)
         #for vector in corpus:  # load one vector into memory at a time
            # pprint(vector)
@@ -52,10 +53,10 @@ if __name__ == '__main__':
         #print(similarity)
         summation = summation + sum(y for _, y in similarity if y > 0)
         #break
-        for x, y in similarity:
-            if y < 0.3:
-                print(a)
-                print(b)
+        # for x, y in similarity:
+        #     if y < 0.3:
+        #         print(a)
+        #         print(b)
 
     print('Number of document in {0} = {1}'.format(dialect[0], len(train_document)))
     print('Number of document in {0} = {1}'.format(dialect[1], len(test_document)))
