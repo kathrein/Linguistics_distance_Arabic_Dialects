@@ -8,26 +8,14 @@ Created on Tue Apr  3 15:01:30 2018
 
 # import logging
 # logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
-
-
 from gensim import corpora, models, similarities
 from pprint import pprint  # pretty-printer
-# from six import iteritems #not load dictionary into memory
 import os.path
 import premodel
-
-
-
+import numpy
 
 def training_phase(folder, dialect):
     counter = 0
-
-    # for corpus_file in corpus_files:
-    #     texts = premodel.read_text(corpus_file)
-    #     if counter == 0:
-    #         temp = texts
-    #         counter = 1
-    # texts = temp + texts
 
     for file in os.listdir(folder):
         extension = os.path.splitext(file)[1]
@@ -55,10 +43,58 @@ def training_phase(folder, dialect):
 
     return dictionary, corpus
 
+def build_ldamodel_training(folder, dialect):
 
+
+    for file in os.listdir(folder):
+        extension = os.path.splitext(file)[1]
+        if extension == '.txt':
+            filepath = os.path.join(folder, file)
+            texts = premodel.read_text(filepath)
+            if counter == 0:
+                dictionary = corpora.Dictionary(texts)
+
+            else:
+                dictionary.add_documents(texts)
+
+    # texts = [['bank', 'river', 'shore', 'water'],
+    #          ['river', 'water', 'flow', 'fast', 'tree'],
+    #          ['bank', 'water', 'fall', 'flow'],
+    #          ['bank', 'bank', 'water', 'rain', 'river'],
+    #          ['river', 'water', 'mud', 'tree'],
+    #          ['money', 'transaction', 'bank', 'finance'],
+    #          ['bank', 'borrow', 'money'],
+    #          ['bank', 'finance'],
+    #          ['finance', 'money', 'sell', 'bank'],
+    #          ['borrow', 'sell'],
+    #          ['bank', 'loan', 'sell']]
+
+   # dictionary = Dictionary(texts)
+    dictionary.save('parameters/LDAmodel_'+ dialect[1] + '.dict')
+    corpus = [dictionary.doc2bow(text) for text in list(premodel.read_set_of_file(folder))]
+    corpora.MmCorpus.serialize('parameters/LDAmodel_'+ dialect[1] + '.mm',corpus)  # store to disk, for later use
+
+    return dictionary, corpus
 
 
 def build_lsi_model(corpus,dictionary):
+    """
+    This process serves two goals:
+    1. To bring out hidden structure in the corpus, discover relationships between words and use them to describe
+    the documents in a new and (hopefully) more semantic way.
+    2. To make the document representation more compact. This both improves efficiency (new representation consumes
+    less resources) and efficacy (marginal data trends are ignored, noise-reduction).
+    """
+    lsi = models.LsiModel(corpus, id2word=dictionary, num_topics=300)#100
+    corpus_lsi = lsi[corpus]  # step 2 -- use the model to transform vectors
+    # for doc in corpus_tfidf:
+    # print(doc)
+    return corpus_lsi, lsi
+
+
+
+
+def build_ldamodel(corpus,dictionary):
     """
     This process serves two goals:
 
@@ -67,13 +103,10 @@ def build_lsi_model(corpus,dictionary):
     2. To make the document representation more compact. This both improves efficiency (new representation consumes
     less resources) and efficacy (marginal data trends are ignored, noise-reduction).
     """
+    numpy.random.seed(1)  # setting random seed to get the same results each time.
+    ldamodel = ldamodel.LdaModel(corpus, id2word=dictionary, num_topics=200)
+    return ldamodel
 
-    lsi = models.LsiModel(corpus, id2word=dictionary, num_topics=300)#100
-    corpus_lsi = lsi[corpus]  # step 2 -- use the model to transform vectors
-    # for doc in corpus_tfidf:
-    # print(doc)
-
-    return corpus_lsi, lsi
 
 
 def compute_similarity(vec_model, corpus_model, dialect):
