@@ -69,6 +69,7 @@ def clean(corpus_file):
 def print_to_file(new_corpus,output_file):
     fout = open(output_file, 'w', encoding = 'utf-8')
     for line in new_corpus:
+        if not line.strip(): continue # remove empty lines
         fout.write(line+'\n') 
 
 def usage():

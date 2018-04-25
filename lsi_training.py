@@ -44,7 +44,7 @@ def training_phase(folder, dialect):
     return dictionary, corpus
 
 def build_ldamodel_training(folder, dialect):
-
+    counter = 0
 
     for file in os.listdir(folder):
         extension = os.path.splitext(file)[1]
@@ -104,8 +104,8 @@ def build_ldamodel(corpus,dictionary):
     less resources) and efficacy (marginal data trends are ignored, noise-reduction).
     """
     numpy.random.seed(1)  # setting random seed to get the same results each time.
-    ldamodel = ldamodel.LdaModel(corpus, id2word=dictionary, num_topics=200)
-    return ldamodel
+    lda_model = models.ldamodel.LdaModel(corpus, id2word=dictionary, num_topics=80)
+    return lda_model
 
 
 

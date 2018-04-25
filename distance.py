@@ -12,6 +12,8 @@ Created on Tue Apr  3 15:01:30 2018
 import lsi_training as lsi_model
 import argparse
 import premodel
+from gensim.matutils import kullback_leibler, jaccard, hellinger, sparse2full
+
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--corpus_folder", "-c", type=str, help='the folder contains the corpus files.', required=True)
@@ -24,15 +26,15 @@ parser.add_argument("--dialect_two", "-s", type=str, help='the test dialect text
 if __name__ == '__main__':
     args = parser.parse_args()
     # dialect = ['pa','sy']
-    dialect = ['LDA', args.dialect_two]
-    corpus_files = ['clean_data/try/' + dialect[0] + '.txt', 'clean_data/try/' + dialect[1] + '.txt']
+    dialect = [args.dialect_one, args.dialect_two]
+    corpus_files = ['clean_data/annotated/' + dialect[0] + '.txt', 'clean_data/annotated/' + dialect[1] + '.txt']
     folder = args.corpus_folder +'/'
     dictionary, corpus = lsi_model.build_ldamodel_training(folder, dialect)
 
     #dictionary, corpus = premodel.upload_data(dialect)
 
     # print('here', len(corpus))
-    lda_model = lsi_model_model.build_ldamodel(corpus,dictionary)
+    lda_model = lsi_model.build_ldamodel(corpus,dictionary)
 
     #now we add the two dialects to test the distance betwen them
     with open(corpus_files[0], encoding='utf-8') as f:  # we can define file_name
@@ -55,11 +57,15 @@ if __name__ == '__main__':
     print('Hellinger distance between 1 and 2 ')
     print(hellinger(lda_bow_first_dialect, lda_bow_second_dialect))
 
+    print('Jcard Distance')
+    print(jaccard(bow_first_dialect,bow_second_dialect))
+
+
     print('kullback_leibler between 1 to 2')
-    print(kullback_leibler(lda_bow_first_dialect, lda_bow_second_dialect))
+   # print(kullback_leibler(lda_bow_first_dialect, lda_bow_second_dialect))
 
     print('kullback_leibler between 2 to 1')
-    print(kullback_leibler(lda_bow_second_dialect,lda_bow_first_dialect))
+   # print(kullback_leibler(lda_bow_second_dialect,lda_bow_first_dialect))
 
     # summation = 0
     # count = 0
