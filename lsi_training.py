@@ -56,6 +56,7 @@ def build_ldamodel_training(folder, dialect):
 
             else:
                 dictionary.add_documents(texts)
+            counter = counter +1
 
     # texts = [['bank', 'river', 'shore', 'water'],
     #          ['river', 'water', 'flow', 'fast', 'tree'],
@@ -75,6 +76,31 @@ def build_ldamodel_training(folder, dialect):
     corpora.MmCorpus.serialize('parameters/LDAmodel_'+ dialect[1] + '.mm',corpus)  # store to disk, for later use
 
     return dictionary, corpus
+
+def build_comparable_ldamodel_training(comp_folder, dialect):
+        counter = 0
+        folders = [comp_folder + dialect[0]+'/', comp_folder + dialect[1]+'/']
+        for folder in folders:
+            for file in os.listdir(folder):
+
+                extension = os.path.splitext(file)[1]
+                if extension == '.txt':
+
+                    filepath = os.path.join(folder, file)
+                    texts = premodel.read_text(filepath)
+                    if counter == 0:
+                        dictionary = corpora.Dictionary(texts)
+                    else:
+                        dictionary.add_documents(texts)
+                    counter = counter +1
+
+        dictionary.save('parameters/comp_LDAmodel_' + dialect[1] + '.dict')
+        corpus = [dictionary.doc2bow(text) for text in list(premodel.read_set_of_file(folders[0]))]
+        corpus = corpus + [dictionary.doc2bow(text) for text in list(premodel.read_set_of_file(folders[1]))]
+        corpora.MmCorpus.serialize('parameters/comp_LDAmodel_' + dialect[1] + '.mm', corpus)  # store to disk, for later use
+
+        return dictionary, corpus
+
 
 
 def build_lsi_model(corpus,dictionary):
@@ -104,7 +130,7 @@ def build_ldamodel(corpus,dictionary):
     less resources) and efficacy (marginal data trends are ignored, noise-reduction).
     """
     numpy.random.seed(1)  # setting random seed to get the same results each time.
-    lda_model = models.ldamodel.LdaModel(corpus, id2word=dictionary, num_topics=80)
+    lda_model = models.ldamodel.LdaModel(corpus, id2word=dictionary, num_topics=300)
     return lda_model
 
 
