@@ -18,6 +18,7 @@ import premodel
 import sys
 
 parser = argparse.ArgumentParser()
+parser.add_argument("--corpus_folder", "-c", type=str, help='the folder contains the corpus files.', required=True)
 
 parser.add_argument("--dialect_one", "-f", type=str, help='the first dialect text file.', required=True)
 

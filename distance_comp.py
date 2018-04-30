@@ -24,7 +24,7 @@ parser.add_argument("--dialect_one", "-f", type=str, help='the train dialect.', 
 
 parser.add_argument("--dialect_two", "-s", type=str, help='the test dialect text file.', required=True)
 
-
+parser.add_argument("--corpus_type", "-t", type=str, help='pc: parallel corpus, cc: comparable corpus, up: un-parallel corpus', required=True)
 
 
 def main():

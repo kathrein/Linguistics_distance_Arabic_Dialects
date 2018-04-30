@@ -123,7 +123,7 @@ def build_tfidf_model(corpus):
     return corpus_tfidf, tfidf
 
 
-def build_dictionary_phase(corpus_files,dict, dialect):
+def build_dictionary_phase(dict, dialect):#(corpus_files,dict, dialect):
 
     """
     build a dictionary for the two dialects

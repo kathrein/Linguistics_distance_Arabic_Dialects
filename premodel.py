@@ -44,7 +44,7 @@ def read_set_of_file(folder):
         #print(len(os.listdir(folder)))
         extension = os.path.splitext(file)[1]
         if extension == '.txt':
-            #print (counter, file)
+            print (counter, file)
             filepath = os.path.join(folder, file)
             f = open(filepath, mode='r', encoding='utf-8')
             lists = lists + read_full_text(filepath)
