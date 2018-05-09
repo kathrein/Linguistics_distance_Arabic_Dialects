@@ -52,6 +52,7 @@ def read_set_of_file(folder):
             counter = counter +1
     return filter(None, lists)
 
+
 def read_folder(folder):
     list = []
     for file in os.listdir(folder):

@@ -14,6 +14,30 @@ import os.path
 import premodel
 import numpy
 
+
+
+def training_comp_lsi(comprarble_folder):
+    counter = 0
+    folders = [item for item in os.listdir(comprarble_folder) if os.path.isdir(os.path.join(comprarble_folder, item))]
+
+    for folder in folders:
+        folderpath = os.path.join(comprarble_folder, folder)
+        texts = [[word for word in document.split()] for document in premodel.read_folder(folderpath)]
+        if counter == 0 :
+            dictionary = corpora.Dictionary(texts)
+
+        else:
+            dictionary.add_documents(texts)
+
+    paths = [os.path.join(comprarble_folder,folders[0]+'/'),os.path.join(comprarble_folder,folders[1]+'/')]
+    #print(list(premodel.read_set_of_file(paths[0] )))
+    corpus = [dictionary.doc2bow(text) for text in [premodel.read_folder(paths[0])[0].split()]]
+    corpus = corpus +  [dictionary.doc2bow(text) for text in [premodel.read_folder(paths[1])[0].split()]]
+    #corpus = [dictionary.doc2bow(text) for text in list(premodel.read_set_of_file(paths[0] ))]
+    #corpus = corpus + [dictionary.doc2bow(text) for text in list(premodel.read_set_of_file(paths[1]))]
+
+    return dictionary,corpus
+
 def training_phase(folder, dialect):
     counter = 0
 

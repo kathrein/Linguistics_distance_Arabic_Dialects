@@ -203,10 +203,6 @@ def comparable_comon_words(folder, dialect):
                 number_of_files = number_of_files +1
     print('overall similarity for comparable corpus = {0}, and length = {1}'.format(overlap/number_of_files, number_of_files))
 
-
-
-
-
 def compute_unparallel_vsm(corpus_files,dialect):
     dictionary, corpus = svm.training_phase(corpus_files, dialect)
     #dictionary, corpus = svm.upload_data(dialect)
@@ -239,10 +235,10 @@ def compute_lsi(folder,dialect,corpus_files):
     dictionary, corpus = models.training_phase(folder, dialect)
     corpus_lsi, lsi = models.build_lsi_model(corpus, dictionary)
 
-    summation = 0
-    with open(corpus_files[1], encoding='utf-8') as f:  # we can define file_name
-        documents = f.read().splitlines()
-    count = 0
+    # summation = 0
+    # with open(corpus_files[1], encoding='utf-8') as f:  # we can define file_name
+    #     documents = f.read().splitlines()
+    #count = 0
     for document in premodel.read_full_text(corpus_files[1]):
         vec_lsi = models.test_corpus(' '.join(document), lsi, dictionary)
         models.compute_similarity(vec_lsi, corpus_lsi, dialect)
@@ -250,6 +246,31 @@ def compute_lsi(folder,dialect,corpus_files):
 
     print('Number of document in {0} = {1}'.format(dialect[0], len(corpus)))
     print('Number of document in {0} = {1}'.format(dialect[1], len(premodel.read_text(corpus_files[1]))))
+
+def compute_comparable_LSI(folder,dialect):
+    dictionary, corpus = models.training_comp_lsi(folder)
+    #sys.Exit()
+    corpus_lsi, lsi = models.build_lsi_model(corpus, dictionary)
+
+    dialect_path = folder +dialect[1]+'/'
+    #documents = list(premodel.read_set_of_file(dialec_paths))
+
+    text = ''
+    for doc in list(premodel.read_set_of_file(dialect_path)):
+        text = text + ' '.join(doc)
+    #print(text)
+    #for document in list(premodel.read_set_of_file(dialect_path)):
+    vec_lsi = models.test_corpus(text, lsi, dictionary)
+    similarity = models.compute_similarity(vec_lsi, corpus_lsi, dialect)
+    summation = 0
+    for id, sim in similarity:
+        summation = summation + sim
+
+    print('sum = ', summation)
+    print('sim = ',summation/10197)
+
+    #print('Number of document in {0} = {1}'.format(dialect[0], len(corpus)))
+    #print('Number of document in {0} = {1}'.format(dialect[1], len(premodel.read_text(corpus_files[1]))))
 
 
 def main():
@@ -286,7 +307,7 @@ def main():
             compute_unparallel_vsm(corpus_files,dialect)
     elif args.method_name.lower() == 'lsi':
         if args.corpus_type.lower() == 'cc':
-            print()
+            compute_comparable_LSI(folder,dialect)
         else:
             compute_lsi(folder,dialect,corpus_files)
     elif args.method_name.lower() == 'com':
