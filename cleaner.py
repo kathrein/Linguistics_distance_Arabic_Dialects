@@ -11,8 +11,15 @@ import string
 from alphabet_detector import AlphabetDetector
 from pprint import pprint
 import delete_repeated_char as del_char
+import re
 
 
+
+
+RE_EMOJI = re.compile('[\U00010000-\U0010ffff]', flags=re.UNICODE)
+
+def strip_emoji(text):
+    return RE_EMOJI.sub(r'', text)
 
 def remove_punctuations(text):
     punctuations = '!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~،'
@@ -58,7 +65,9 @@ def clean(corpus_file):
         del alphapet_text
 
         final_update_text = del_char.delete_repeat_char(pure_arabic_text)
-        new_corpus.append(final_update_text)
+
+        final_without_emoji = strip_emoji(final_update_text)
+        new_corpus.append(final_without_emoji)
     
     #print(new_corpus)
     #return ' '.join(words), new_corpus
@@ -77,10 +86,11 @@ def usage():
 
 
 if __name__ == '__main__':
-    if len(sys.argv) == 2:
-        corpus = 'clean_data/'+sys.argv[1]  # file_name
+    if len(sys.argv) == 3:
+        folder_name = sys.argv[1]
+        corpus = folder_name + '/' +sys.argv[2]  # file_name
         #print(clean(corpus))
-        print_to_file(clean(corpus),'clean_data/clean_'+sys.argv[1])
+        print_to_file(clean(corpus),folder_name+'/clean_'+sys.argv[2])
     else:
         print(usage())
         sys.exit(-1)

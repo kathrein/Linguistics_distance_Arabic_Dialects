@@ -10,6 +10,9 @@ Created on Tue Apr  3 15:01:30 2018
 # logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 #command
 #python3 distance.py -c clean_data/padic  -m vsm -t pc -f msa  -s msa
+#python3 distance.py -c clean_data/dart  -m lsi -t up -c clean_data/dart  -s irq
+#python3 distance.py -c clean_data/dart  -m d -t up -c clean_data/dart -f lev  -s irq
+
 
 import lsi_training as models
 import psvm_training as svm

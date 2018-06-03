@@ -11,7 +11,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--corpus_folder", "-c", type=str, help='the folder contains the corpus files.', required=True)
 parser.add_argument("--dialect", "-f", type=str, help='the dialect  file', required=True)
 parser.add_argument("--count_common", "-n", type=int, help='number of most common words', required=True)
-parser.add_argument("--corpus_type", "-t", type=str, help='pc: parallel corpus, cc: comparable corpus, up: un-parallel corpus', required=True)
+parser.add_argument("--corpus_type", "-t", type=str, help='pc: parallel corpus, cc: comparable corpus, up: un-parallel corpus', required=False)
 
 
 
