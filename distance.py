@@ -321,6 +321,14 @@ def main():
 
 
 
+# arb = set(open('msa.txt').read().split())
+# sy =  set(open('sy.txt').read().split())
+#
+# intersection = arb.intersection(sy)
+# cw = len(intersection) / (len(arb) + len (sy))
+# print( cw )
+# print(1 - cw )
+
 
 
 

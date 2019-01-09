@@ -87,7 +87,7 @@ def usage():
 
 if __name__ == '__main__':
     if len(sys.argv) == 3:
-        folder_name = sys.argv[1]
+        folder_name = 'clean_data/' +sys.argv[1]
         corpus = folder_name + '/' +sys.argv[2]  # file_name
         #print(clean(corpus))
         print_to_file(clean(corpus),folder_name+'/clean_'+sys.argv[2])

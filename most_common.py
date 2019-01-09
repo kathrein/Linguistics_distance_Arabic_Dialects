@@ -22,6 +22,7 @@ if __name__ == '__main__':
 
     if args.corpus_type == 'cc':
         text = ''.join(list(premodel.read_folder(folder)))
+        print(len(text))
         #print(nltk.tokenize.word_tokenize(text2))
     else :
         with open(file_path, encoding = 'utf-8') as f:
@@ -33,8 +34,9 @@ if __name__ == '__main__':
     #print(allWords)
     allWordDist = nltk.FreqDist(allWords)
     pprint(allWordDist.most_common(args.count_common))
-
-
+    #print(folder+'most_common_'+str(args.count_common)+'_''+args.dialect+'.txt')
+    f = open(args.corpus_folder+'/'+'most_common_'+str(args.count_common)+'_'+args.dialect+'.txt','w')
+    f.write(str(allWordDist.most_common(args.count_common)))
 
 
     # for word, frequency in allWordDist.most_common(10):
